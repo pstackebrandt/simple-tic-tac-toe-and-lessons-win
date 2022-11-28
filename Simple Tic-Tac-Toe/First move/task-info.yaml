@@ -339,6 +339,48 @@ files:
         }
     }
   learner_created: false
+- name: src/tictactoe/gamestate/GameResult.java
+  visible: true
+  learner_created: true
+- name: src/tictactoe/gamestate/IGameState.java
+  visible: true
+  learner_created: true
+- name: src/tictactoe/gamestate/GameStateSummary.java
+  visible: true
+  learner_created: true
+- name: src/tictactoe/gamestate/IGameResult.java
+  visible: true
+  learner_created: true
+- name: src/tictactoe/gamestate/IGameStateError.java
+  visible: true
+  learner_created: true
+- name: src/tictactoe/PlayGroundPrinter.java
+  visible: true
+  learner_created: true
+- name: src/tictactoe/Player.java
+  visible: true
+  learner_created: true
+- name: src/tictactoe/gamestate/GameData.java
+  visible: true
+  learner_created: true
+- name: src/tictactoe/Game.java
+  visible: true
+  learner_created: true
+- name: src/tictactoe/gamestate/GameStateErrorType.java
+  visible: true
+  learner_created: true
+- name: src/tictactoe/gamestate/IGameSetup.java
+  visible: true
+  learner_created: true
+- name: src/tictactoe/gamestate/GameStateError.java
+  visible: true
+  learner_created: true
+- name: src/tictactoe/gamestate/IGameData.java
+  visible: true
+  learner_created: true
+- name: src/tictactoe/gamestate/GameResultAbstract.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/48/stages/258/implement#comment
 status: Solved
 record: 4
