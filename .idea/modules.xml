@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Simple_Tic-Tac-Toe.iml" filepath="$PROJECT_DIR$/.idea/modules/Simple_Tic-Tac-Toe.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Simple Tic-Tac-Toe/task/Simple_Tic-Tac-Toe.Simple_Tic-Tac-Toe-task.iml" filepath="$PROJECT_DIR$/.idea/modules/Simple Tic-Tac-Toe/task/Simple_Tic-Tac-Toe.Simple_Tic-Tac-Toe-task.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Simple Tic-Tac-Toe/task/Simple_Tic-Tac-Toe.Simple_Tic-Tac-Toe-task.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Simple Tic-Tac-Toe/task/Simple_Tic-Tac-Toe.Simple_Tic-Tac-Toe-task.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Simple Tic-Tac-Toe/task/Simple_Tic-Tac-Toe.Simple_Tic-Tac-Toe-task.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Simple Tic-Tac-Toe/task/Simple_Tic-Tac-Toe.Simple_Tic-Tac-Toe-task.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Topics/Multidimensional array/Create cube/Simple_Tic-Tac-Toe.Topics-Multidimensional_array-Create_cube.iml" filepath="$PROJECT_DIR$/.idea/modules/Topics/Multidimensional array/Create cube/Simple_Tic-Tac-Toe.Topics-Multidimensional_array-Create_cube.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Topics/Multidimensional array/Create cube/Simple_Tic-Tac-Toe.Topics-Multidimensional_array-Create_cube.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Topics/Multidimensional array/Create cube/Simple_Tic-Tac-Toe.Topics-Multidimensional_array-Create_cube.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Topics/Multidimensional array/Create cube/Simple_Tic-Tac-Toe.Topics-Multidimensional_array-Create_cube.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Topics/Multidimensional array/Create cube/Simple_Tic-Tac-Toe.Topics-Multidimensional_array-Create_cube.test.iml" />
