@@ -11,6 +11,12 @@ public class GameData extends GameResultAbstract implements IGameData {
 
     public GameData(String stateLine) {
         this.stateLine = stateLine;
+        this.currentPlayer = Player.X;
+    }
+
+    public GameData(String stateLine, Player startPlayer) {
+        this(stateLine);
+        this.currentPlayer = startPlayer;
     }
 
     /**
@@ -18,16 +24,25 @@ public class GameData extends GameResultAbstract implements IGameData {
      */
     private String stateLine;
 
+    private Player currentPlayer;
+
     public int getCellsCount() {
         return stateLine.length();
     }
 
-    public int getPlayGroundRowsCount() {
-        return 3;
+    @Override
+    public Player getCurrentPlayer() {
+        return this.currentPlayer;
     }
 
-    public int getPlayGroundColumnsCount() {
-        return 3;
+    /**
+     * Set player who plays his turn next.
+     */
+    @Override
+    public void setCurrentPlayer(Player nextPlayer) {
+        if (this.currentPlayer != nextPlayer){
+            this.currentPlayer = nextPlayer;
+        }
     }
 
     public String getGameStateLine() {
@@ -69,7 +84,6 @@ public class GameData extends GameResultAbstract implements IGameData {
     }
 
     public char getPlayerCharacter(Player player) {
-        // TODO add test
         if (player == Player.X) {
             return getPlayerXStateCharacter();
         }

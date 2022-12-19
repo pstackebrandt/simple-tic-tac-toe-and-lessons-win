@@ -21,6 +21,7 @@ class Main {
                 break;
             default:
                 message = "Unknown number";
+                break;
         }
 
         System.out.println(message);

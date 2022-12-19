@@ -17,17 +17,30 @@ import static java.util.Optional.empty;
  * different playground dimensions.
  */
 public class Game {
-    private final int playGroundRows = 3;
-    private final int playGroundColumns = 3;
+    private static final String VALID_STATE_CHARS_STRING = "OX_";
+    private static final int PLAY_GROUND_ROWS = 3;
+    private static final int PLAY_GROUND_COLUMNS = 3;
+    private static final String START_SITUATION_OF_CLEAN_3_X_3_GAME = "_________";
     private final Scanner scanner = new Scanner(System.in);
 
-    private final static String ValidStateCharsString = "OX_";
     private IGameData gameData;
+    private String mode = "lesson";
 
     /**
      * Instantiate Game
      */
     public Game() {
+    }
+
+    /**
+     * Instantiate Game, set a specific mode.
+     */
+    public Game(String mode) {
+        if ("lesson".equals(mode) || "myGame".equals(mode) || "test".equals(mode)) {
+            this.mode = mode;
+        } else {
+            throw new IllegalArgumentException("Mode %s is unexpected. Check mode value!");
+        }
     }
 
     /**
@@ -42,30 +55,53 @@ public class Game {
     /**
      * Manages the game.
      */
-    public void run(String mode) {
-        //System.out.println("Begin run()");
-
-        // get initial game state
-        String gameStateLine;
-        if (mode.equals("test")) {
-            gameStateLine = "_________";
-        } else {
-            gameStateLine = cleanGameStateLine(getInitialGameState(scanner));
+    public void run() {
+        if(mode.equals("test")) {
+            System.out.println("Begin run()");
         }
 
-        this.gameData = new GameData(gameStateLine);
+        initializeGame();
 
         // print game state
-        var printer = new PlayGroundPrinter(this.gameData.getGameStateSquare());
+        var printer = new PlayGroundPrinter(this.gameData.getGameStateSquare(), this.gameData.getEmptyCellStateCharacter());
         printer.printPlayGround();
 
-        // get first move of player x
-        this.makeMove(Player.X);
+        loopGame();
+        printGameResult();
+        if(mode.equals("test")) {
+            System.out.println("End run()");
+        }
+    }
 
-        // print changed game state
-        printer = new PlayGroundPrinter(this.gameData.getGameStateSquare());
-        printer.printPlayGround();
-        //System.out.println("End run()");
+    private void initializeGame() {
+        this.gameData = new GameData(START_SITUATION_OF_CLEAN_3_X_3_GAME, Player.X);
+    }
+
+    private void loopGame() {
+        boolean gameIsOn = true;
+        while (gameIsOn) {
+            this.makeMove(this.gameData.getCurrentPlayer());
+
+            // print changed game state
+            PlayGroundPrinter printer = new PlayGroundPrinter(this.gameData.getGameStateSquare(),
+                    this.gameData.getEmptyCellStateCharacter());
+            printer.printPlayGround();
+
+            IGameResult gameResult = getGameResult(this.gameData);
+            if (gameResult.getGameStateSummary() == GameStateSummary.NotFinished) {
+                setNextPlayer();
+            } else {
+                gameIsOn = false;
+            }
+        }
+    }
+
+    void setNextPlayer() {
+        this.gameData.setCurrentPlayer(calculateNextPlayer(this.gameData.getCurrentPlayer()));
+    }
+
+    public static Player calculateNextPlayer(Player current) {
+        return current == Player.X ? Player.O : Player.X;
     }
 
     /**
@@ -74,7 +110,7 @@ public class Game {
      * @param player of this move.
      */
     private void makeMove(Player player) {
-        Point move = askMove(player, scanner);
+        Point move = askValidMove(player, scanner);
 
         // add move data to game data
         this.gameData.addMove(move.x, move.y, player);
@@ -84,8 +120,10 @@ public class Game {
      * Returns coordinates of a valid move.
      * Coordinates are 0 based.
      */
-    protected Point askMove(Player player, Scanner scanner) {
-        //System.out.println("Begin askMove()");
+    protected Point askValidMove(Player player, Scanner scanner) {
+        if(mode.equals("test")) {
+            System.out.println("Begin askMove()");
+        }
         int row;
         int col;
         boolean isValidMove = false;
@@ -97,7 +135,9 @@ public class Game {
             col = 0;
 
             // ask user for move
-            //System.out.println("Please enter move eg. 1 1 (row column)");
+            if(mode.equals("test") || mode.equals("myGame")) {
+                System.out.printf("Player %s please enter move. (eg. 1 1 (row column))%n", player);
+            }
 
             Integer number = getNumberFromConsole(scanner);
 
@@ -128,7 +168,6 @@ public class Game {
             }
         } while (!isValidMove);
 
-        //System.out.println("End askMove()");
         return new Point(row, col);
     }
 
@@ -152,40 +191,37 @@ public class Game {
      * @param col first col has number 0
      */
     protected boolean isCellFree(int row, int col, String gameStateLine) {
-        final int position = row * playGroundRows + col;
+        final int position = row * PLAY_GROUND_ROWS + col;
 
         return gameStateLine.charAt(position) == '_';
     }
 
     /**
      * Returns whether move is valid
+     *
      * @param coordinate Must be 0 based.
      */
     protected boolean isCoordinateWithinBounds(Point coordinate) {
-        boolean isWithin = true;
-
-        if (coordinate.x < 0 ||
-                coordinate.y < 0 ||
-                coordinate.x >= playGroundRows ||
-                coordinate.y >= playGroundRows) {
-            isWithin = false;
-        }
-
-        return isWithin;
+        return coordinate.x >= 0 &&
+                coordinate.y >= 0 &&
+                coordinate.x < PLAY_GROUND_ROWS &&
+                coordinate.y < PLAY_GROUND_ROWS;
     }
 
     protected String getInitialGameState(Scanner scanner) {
         // loop until got valid game state
         String gameState;
         boolean gameStateIsValid;
-        //System.out.println("Please enter an initial game state like ___XOO___");
+        if(!mode.equals("lesson")) {
+            System.out.println("Please enter an initial game state like ___XOO___");
+        }
 
         do {
             // ask user for game state
             if (scanner.hasNext()) {
                 gameState = scanner.nextLine();
             } else {
-                gameState = "_________"; // We will get such case only within tests.
+                gameState = START_SITUATION_OF_CLEAN_3_X_3_GAME; // We will get such case only within tests.
             }
 
             // optimize input
@@ -195,7 +231,10 @@ public class Game {
             //    must contain 9 chars
             gameStateIsValid = isGameStateLineLengthValid(gameState);
             if (!gameStateIsValid) {
-                System.out.println("Please enter game state with " + getCellsCount() + " characters!");
+                if(!mode.equals("lesson")) {
+                    System.out.println("Please enter game state with " + getCellsCount() + " characters!");
+                }
+
                 gameState = null;
                 continue;
             }
@@ -203,7 +242,10 @@ public class Game {
             //    must contain only valid chars
             gameStateIsValid = isGameStateConsistsOfValidChars(gameState);
             if (!gameStateIsValid) {
-                System.out.println("Please enter game state which contains characters  " + ValidStateCharsString + " only!");
+                if(!mode.equals("lesson")) {
+                    System.out.println("Please enter game state which contains characters  " +
+                            VALID_STATE_CHARS_STRING + " only!");
+                }
                 gameState = null;
             }
         } while (gameState == null);
@@ -214,7 +256,7 @@ public class Game {
     protected boolean isGameStateConsistsOfValidChars(String gameState) {
         int correctChars = 0;
         for (char currentStateChar : gameState.toCharArray()) {
-            for (char currentAllowedChar : ValidStateCharsString.toCharArray()) {
+            for (char currentAllowedChar : VALID_STATE_CHARS_STRING.toCharArray()) {
                 if (currentStateChar == currentAllowedChar) {
                     correctChars++;
                 }
@@ -238,7 +280,7 @@ public class Game {
      * @return cells count
      */
     private int getCellsCount() {
-        return playGroundRows * playGroundColumns;
+        return PLAY_GROUND_ROWS * PLAY_GROUND_COLUMNS;
     }
 
     /**
@@ -278,12 +320,12 @@ public class Game {
 
         // must contain only _, X, O (letter)
         for (String character : state.split("")) {
-            if (!ValidStateCharsString.contains(character)) {
+            if (!VALID_STATE_CHARS_STRING.contains(character)) {
                 return false;
             }
         }
 
-        // todo ?? check whether count of state chars of both players is valid.
+        // Useful extension: Check whether count of state chars of both players is valid.
 
         return true;
     }
@@ -301,8 +343,8 @@ public class Game {
     public String stateToString(char[][] state) {
         var result = new StringBuilder();
 
-        for (int row = 0; row < playGroundRows; row++) {
-            for (int col = 0; col < playGroundColumns; col++) {
+        for (int row = 0; row < PLAY_GROUND_ROWS; row++) {
+            for (int col = 0; col < PLAY_GROUND_COLUMNS; col++) {
                 result.append(state[row][col]);
             }
         }
@@ -338,7 +380,6 @@ public class Game {
      */
     private IGameResult getGameResult(final IGameState gameState) {
         Optional<IGameResult> result;
-        // checkCountOfCells // todo later?
 
         // find invalid states of cell count
         result = invalidatePlayerCellsCount(gameState.getGameStateLine());
@@ -346,15 +387,13 @@ public class Game {
 
         // Check win state of game
         result = getWinState(gameState); //x, o, draw, GameNotFinished, erroneous state
-        if (result.isPresent()) return result.get();
-
-        return new GameResult(GameStateSummary.Unknown); // is error
+        // is error
+        return result.orElseGet(() -> new GameResult(GameStateSummary.Unknown));
     }
 
     /**
      * Return information about winner, stalemate, game end without winner, erroneous state.
      */
-    // todo We don't seem to need an Optional. Remove!
     private Optional<IGameResult> getWinState(IGameState gameState) {
         var gameStateError = checkPlayerCellsCountDifference(gameState);
         if (gameStateError.isPresent()) {
@@ -400,7 +439,7 @@ public class Game {
     private int getWinLinesCount(IGameState gameState, Player player) {
         var linesCount = new AtomicInteger();
 
-        final char cellChar =  player.equals(Player.X) ? gameState.getPlayerXStateCharacter()
+        final char cellChar = player.equals(Player.X) ? gameState.getPlayerXStateCharacter()
                 : gameState.getPlayerOStateCharacter();
 
         final var workLine = gameState.getGameStateLine().replaceAll(String.valueOf(cellChar), "#");
